@@ -1,0 +1,47 @@
+# Full stack: MongoDB + Redis + backend + nginx (serves the built frontend
+# and proxies /api and /socket.io to the backend).
+# Usage: cp backend/.env.sample backend/.env  (fill in secrets), then
+#        docker compose up --build   ->  http://localhost
+
+services:
+  mongo:
+    image: mongo:7
+    restart: always
+    volumes:
+      - mongo_data:/data/db
+
+  redis:
+    image: redis:7
+    restart: always
+    volumes:
+      - redis_data:/data
+
+  backend:
+    build: ./backend
+    restart: always
+    env_file:
+      - ./backend/.env
+    environment:
+      # override the localhost values from .env with the compose service names
+      MONGO_URI: mongodb://mongo:27017
+      REDIS_URL: redis://redis:6379
+      PORT: "4000"
+    depends_on:
+      - mongo
+      - redis
+    expose:
+      - "4000"
+
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:
+  redis_data:

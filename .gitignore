@@ -1,0 +1,21 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+
+# environment files (keep the samples)
+.env
+.env.*
+!.env.sample
+
+# multer temp uploads
+backend/public/temp/
+
+# logs & OS/editor files
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
